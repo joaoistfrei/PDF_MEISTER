@@ -6,5 +6,6 @@ contextBridge.exposeInMainWorld('pdfApi', {
   appendPdf: (filePath) => ipcRenderer.invoke('append-pdf', filePath),
   removePage: (pageIndex) => ipcRenderer.invoke('remove-page', pageIndex),
   movePage: (fromIndex, toIndex) => ipcRenderer.invoke('move-page', fromIndex, toIndex),
+  clearDoc: () => ipcRenderer.invoke('clear-doc'),
   savePdfAs: () => ipcRenderer.invoke('save-pdf-as'),
 });

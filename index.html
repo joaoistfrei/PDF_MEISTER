@@ -22,6 +22,7 @@
 			<section class="toolbar">
 				<button id="btn-add" type="button" disabled>Add Pages From PDF</button>
 				<button id="btn-save" type="button" disabled>Export New PDF</button>
+				<button id="btn-clear" type="button" disabled>Clear</button>
 			</section>
 
 			<section class="content">
@@ -30,16 +31,12 @@
 					<div id="empty-state" class="empty-state">No document loaded yet.</div>
 					<ul id="page-list" class="page-list"></ul>
 				</aside>
-
-				<section class="panel preview-panel">
-					<h3>Selection</h3>
-					<div id="preview" class="preview">Select a page to manage it.</div>
-				</section>
 			</section>
 
 			<footer id="status" class="status">Ready.</footer>
 		</main>
 
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 		<script src="renderer.js"></script>
 	</body>
 </html>

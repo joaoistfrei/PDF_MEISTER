@@ -2,17 +2,27 @@ const dropZone = document.getElementById('drop-zone');
 const openBtn = document.getElementById('btn-open');
 const addBtn = document.getElementById('btn-add');
 const saveBtn = document.getElementById('btn-save');
+const clearBtn = document.getElementById('btn-clear');
 const pageList = document.getElementById('page-list');
-const preview = document.getElementById('preview');
 const status = document.getElementById('status');
 const emptyState = document.getElementById('empty-state');
+const pdfjsLib = window.pdfjsLib || null;
+
+if (pdfjsLib) {
+	pdfjsLib.GlobalWorkerOptions.workerSrc =
+		'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
 
 const state = {
 	loaded: false,
 	filePath: null,
 	pages: [],
 	selectedIndex: null,
+	pdfBytesBase64: null,
 };
+
+let thumbnailDoc = null;
+let renderToken = 0;
 
 function setStatus(message, isError = false) {
 	status.textContent = message;
@@ -22,22 +32,8 @@ function setStatus(message, isError = false) {
 function toggleLoadedUi(isLoaded) {
 	addBtn.disabled = !isLoaded;
 	saveBtn.disabled = !isLoaded;
+	clearBtn.disabled = !isLoaded;
 	emptyState.style.display = isLoaded ? 'none' : 'block';
-}
-
-function renderPreview() {
-	if (!state.loaded || state.selectedIndex === null) {
-		preview.textContent = 'Select a page to manage it.';
-		return;
-	}
-
-	const pageNumber = state.selectedIndex + 1;
-	preview.innerHTML = `
-		<div class="preview-card">
-			<h4>Page ${pageNumber}</h4>
-			<p>Use Move Up, Move Down, or Remove to organize your document.</p>
-		</div>
-	`;
 }
 
 async function updateDoc(result) {
@@ -45,17 +41,75 @@ async function updateDoc(result) {
 	state.filePath = result.filePath || state.filePath;
 	state.pages = result.pages || [];
 	state.selectedIndex = state.pages.length > 0 ? 0 : null;
+	state.pdfBytesBase64 = result.pdfBytes || null;
 
-	renderPageList();
-	renderPreview();
+	await loadThumbnailDocument();
+
+	await renderPageList();
 	toggleLoadedUi(true);
 
 	const sourceName = state.filePath ? state.filePath.split(/[\\/]/).pop() : 'document';
 	setStatus(`Loaded ${sourceName} with ${state.pages.length} page(s).`);
 }
 
-function renderPageList() {
+function base64ToUint8Array(base64) {
+	const binary = atob(base64);
+	const bytes = new Uint8Array(binary.length);
+
+	for (let i = 0; i < binary.length; i += 1) {
+		bytes[i] = binary.charCodeAt(i);
+	}
+
+	return bytes;
+}
+
+async function loadThumbnailDocument() {
+	thumbnailDoc = null;
+
+	if (!pdfjsLib || !state.pdfBytesBase64) {
+		return;
+	}
+
+	try {
+		const bytes = base64ToUint8Array(state.pdfBytesBase64);
+		const task = pdfjsLib.getDocument({ data: bytes });
+		thumbnailDoc = await task.promise;
+	} catch (error) {
+		thumbnailDoc = null;
+		setStatus('Loaded PDF, but thumbnails could not be generated.', true);
+	}
+}
+
+async function renderThumbnail(index, canvas, token) {
+	if (!thumbnailDoc) {
+		return;
+	}
+
+	const page = await thumbnailDoc.getPage(index + 1);
+	if (token !== renderToken) {
+		return;
+	}
+
+	const initialViewport = page.getViewport({ scale: 1 });
+	const targetWidth = 96;
+	const scale = targetWidth / initialViewport.width;
+	const viewport = page.getViewport({ scale });
+	const ctx = canvas.getContext('2d');
+
+	canvas.width = Math.max(1, Math.floor(viewport.width));
+	canvas.height = Math.max(1, Math.floor(viewport.height));
+
+	await page.render({
+		canvasContext: ctx,
+		viewport,
+	}).promise;
+}
+
+async function renderPageList() {
+	const token = ++renderToken;
 	pageList.innerHTML = '';
+
+	const thumbnailTasks = [];
 
 	state.pages.forEach((page, index) => {
 		const item = document.createElement('li');
@@ -64,6 +118,16 @@ function renderPageList() {
 			item.classList.add('selected');
 		}
 
+		const position = document.createElement('div');
+		position.className = 'page-position';
+		position.textContent = `#${index + 1}`;
+
+		const thumbWrap = document.createElement('div');
+		thumbWrap.className = 'page-thumb-wrap';
+		const thumbCanvas = document.createElement('canvas');
+		thumbCanvas.className = 'page-thumb';
+		thumbWrap.appendChild(thumbCanvas);
+
 		const labelBtn = document.createElement('button');
 		labelBtn.type = 'button';
 		labelBtn.className = 'page-label';
@@ -71,7 +135,6 @@ function renderPageList() {
 		labelBtn.addEventListener('click', () => {
 			state.selectedIndex = index;
 			renderPageList();
-			renderPreview();
 		});
 
 		const controls = document.createElement('div');
@@ -103,9 +166,17 @@ function renderPageList() {
 		});
 
 		controls.append(upBtn, downBtn, removeBtn);
-		item.append(labelBtn, controls);
+		item.append(position, thumbWrap, labelBtn, controls);
 		pageList.appendChild(item);
+
+		thumbnailTasks.push(
+			renderThumbnail(index, thumbCanvas, token).catch(() => {
+				thumbWrap.classList.add('thumb-error');
+			})
+		);
 	});
+
+	await Promise.all(thumbnailTasks);
 }
 
 async function loadPdfByPath(filePath) {
@@ -135,8 +206,7 @@ async function removePage(index) {
 		if (state.pages.length > 0) {
 			state.selectedIndex = Math.min(index, state.pages.length - 1);
 		}
-		renderPageList();
-		renderPreview();
+		await renderPageList();
 		setStatus(`Removed page ${index + 1}.`);
 	} catch (error) {
 		setStatus(error.message || 'Could not remove page.', true);
@@ -148,11 +218,31 @@ async function movePage(fromIndex, toIndex) {
 		const result = await window.pdfApi.movePage(fromIndex, toIndex);
 		await updateDoc(result);
 		state.selectedIndex = toIndex;
-		renderPageList();
-		renderPreview();
+		await renderPageList();
 		setStatus(`Moved page ${fromIndex + 1} to position ${toIndex + 1}.`);
 	} catch (error) {
 		setStatus(error.message || 'Could not move page.', true);
+	}
+}
+
+function resetUiToEmpty() {
+	state.loaded = false;
+	state.filePath = null;
+	state.pages = [];
+	state.selectedIndex = null;
+	state.pdfBytesBase64 = null;
+	thumbnailDoc = null;
+	pageList.innerHTML = '';
+	toggleLoadedUi(false);
+}
+
+async function clearDocument() {
+	try {
+		await window.pdfApi.clearDoc();
+		resetUiToEmpty();
+		setStatus('Cleared all pages from the working document.');
+	} catch (error) {
+		setStatus(error.message || 'Could not clear pages.', true);
 	}
 }
 
@@ -184,6 +274,7 @@ async function saveAs() {
 openBtn.addEventListener('click', openAndLoadSinglePdf);
 addBtn.addEventListener('click', openAndAppendPdf);
 saveBtn.addEventListener('click', saveAs);
+clearBtn.addEventListener('click', clearDocument);
 
 ['dragenter', 'dragover'].forEach((eventName) => {
 	dropZone.addEventListener(eventName, (event) => {
@@ -222,4 +313,3 @@ dropZone.addEventListener('drop', async (event) => {
 });
 
 toggleLoadedUi(false);
-renderPreview();

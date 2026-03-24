@@ -6,6 +6,20 @@ const { PDFDocument } = require('pdf-lib');
 let mainWindow;
 let currentDoc = null;
 let currentSourcePath = null;
+let currentPageMeta = [];
+
+function getSourceName(filePath) {
+	const parsed = path.parse(filePath || 'document.pdf');
+	return parsed.name || 'document';
+}
+
+function createPageMeta(filePath, pageCount) {
+	const sourceName = getSourceName(filePath);
+	return Array.from({ length: pageCount }, (_, i) => ({
+		sourceName,
+		sourcePageNumber: i + 1,
+	}));
+}
 
 function createWindow() {
 	mainWindow = new BrowserWindow({
@@ -39,7 +53,9 @@ function getPageLabels() {
 	const count = getPageCount();
 	return Array.from({ length: count }, (_, i) => ({
 		index: i,
-		label: `Page ${i + 1}`,
+		label: `#${
+			currentPageMeta[i]?.sourcePageNumber ?? i + 1
+		}-${currentPageMeta[i]?.sourceName ?? 'document'}`,
 	}));
 }
 
@@ -81,6 +97,7 @@ app.whenReady().then(() => {
 		const input = await fs.readFile(filePath);
 		currentDoc = await PDFDocument.load(input);
 		currentSourcePath = filePath;
+		currentPageMeta = createPageMeta(filePath, getPageCount());
 
 		return {
 			filePath,
@@ -105,6 +122,8 @@ app.whenReady().then(() => {
 			currentDoc.addPage(copiedPage);
 		}
 
+		currentPageMeta.push(...createPageMeta(filePath, incomingDoc.getPageCount()));
+
 		return {
 			pageCount: getPageCount(),
 			pages: getPageLabels(),
@@ -125,6 +144,7 @@ app.whenReady().then(() => {
 		}
 
 		currentDoc.removePage(pageIndex);
+		currentPageMeta.splice(pageIndex, 1);
 
 		return {
 			pageCount: getPageCount(),
@@ -160,12 +180,21 @@ app.whenReady().then(() => {
 		pages.forEach((page) => nextDoc.addPage(page));
 
 		currentDoc = nextDoc;
+		currentPageMeta = order.map((originalIndex) => currentPageMeta[originalIndex]);
 
 		return {
 			pageCount: getPageCount(),
 			pages: getPageLabels(),
 			pdfBytes: (await getCurrentBytes()).toString('base64'),
 		};
+	});
+
+	ipcMain.handle('clear-doc', async () => {
+		currentDoc = null;
+		currentSourcePath = null;
+		currentPageMeta = [];
+
+		return { cleared: true };
 	});
 
 	ipcMain.handle('save-pdf-as', async () => {
