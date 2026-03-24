@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>PDF Meister</title>
+		<link rel="stylesheet" href="styles.css" />
+	</head>
+	<body>
+		<main class="app">
+			<header class="hero">
+				<h1>PDF Meister</h1>
+				<p>Drop PDF files, remove pages, add pages from another PDF, and export a new file.</p>
+			</header>
+
+			<section id="drop-zone" class="drop-zone">
+				<h2>Drop PDFs Here</h2>
+				<p>Drop one file to start. Drop multiple files to merge them in order.</p>
+				<button id="btn-open" type="button">Choose PDF</button>
+			</section>
+
+			<section class="toolbar">
+				<button id="btn-add" type="button" disabled>Add Pages From PDF</button>
+				<button id="btn-save" type="button" disabled>Export New PDF</button>
+			</section>
+
+			<section class="content">
+				<aside class="panel pages-panel">
+					<h3>Pages</h3>
+					<div id="empty-state" class="empty-state">No document loaded yet.</div>
+					<ul id="page-list" class="page-list"></ul>
+				</aside>
+
+				<section class="panel preview-panel">
+					<h3>Selection</h3>
+					<div id="preview" class="preview">Select a page to manage it.</div>
+				</section>
+			</section>
+
+			<footer id="status" class="status">Ready.</footer>
+		</main>
+
+		<script src="renderer.js"></script>
+	</body>
+</html>
