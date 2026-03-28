@@ -32,6 +32,15 @@ body {
   gap: 16px;
 }
 
+.hidden {
+  display: none !important;
+}
+
+.screen {
+  display: grid;
+  gap: 16px;
+}
+
 .hero h1 {
   margin: 0;
   letter-spacing: 0.03em;
@@ -40,6 +49,84 @@ body {
 .hero p {
   margin: 8px 0 0;
   color: var(--muted);
+}
+
+.hero-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.category-grid,
+.options-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.category-grid {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.options-grid {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.category-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+}
+
+.category-card h2 {
+  margin: 0;
+}
+
+.category-card p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.doc-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.tool-card {
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: white;
+  padding: 14px;
+  min-height: 126px;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+}
+
+.tool-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--accent-strong);
+}
+
+.tool-copy {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.ghost {
+  background: #faf8f3;
+}
+
+.nav-row {
+  display: flex;
+  justify-content: flex-start;
 }
 
 .drop-zone {
@@ -206,6 +293,10 @@ button:disabled {
 }
 
 @media (max-width: 900px) {
+  .doc-buttons {
+    grid-template-columns: 1fr;
+  }
+
   .page-item {
     grid-template-columns: 52px 72px 1fr;
   }

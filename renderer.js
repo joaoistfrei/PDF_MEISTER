@@ -1,3 +1,14 @@
+const homeScreen = document.getElementById('screen-home');
+const pdfOptionsScreen = document.getElementById('screen-pdf-options');
+const pdfWorkspaceScreen = document.getElementById('screen-pdf-workspace');
+const categoryPdfBtn = document.getElementById('btn-category-pdf');
+const pdfReorderBtn = document.getElementById('btn-pdf-reorder');
+const pdfFuseBtn = document.getElementById('btn-pdf-fuse');
+const backHomeBtn = document.getElementById('btn-back-home');
+const backToolsBtn = document.getElementById('btn-back-tools');
+const docMergeBtn = document.getElementById('btn-doc-merge');
+const docReorderBtn = document.getElementById('btn-doc-reorder');
+const docConvertBtn = document.getElementById('btn-doc-convert');
 const dropZone = document.getElementById('drop-zone');
 const openBtn = document.getElementById('btn-open');
 const addBtn = document.getElementById('btn-add');
@@ -23,6 +34,12 @@ const state = {
 
 let thumbnailDoc = null;
 let renderToken = 0;
+
+function showScreen(screenName) {
+	homeScreen.classList.toggle('hidden', screenName !== 'home');
+	pdfOptionsScreen.classList.toggle('hidden', screenName !== 'pdf-options');
+	pdfWorkspaceScreen.classList.toggle('hidden', screenName !== 'pdf-workspace');
+}
 
 function setStatus(message, isError = false) {
 	status.textContent = message;
@@ -271,6 +288,48 @@ async function saveAs() {
 	}
 }
 
+function showDocComingSoon() {
+	setStatus('.DOC tools are not available yet. Coming soon.', true);
+}
+
+function openPdfWorkspace(mode) {
+	showScreen('pdf-workspace');
+
+	if (mode === 'fuse') {
+		setStatus('PDF Fuse mode selected. Drop multiple PDFs to merge, or open one and add more.', false);
+		return;
+	}
+
+	setStatus('PDF Reorder mode selected. Open a PDF and arrange page order.', false);
+}
+
+categoryPdfBtn.addEventListener('click', () => {
+	showScreen('pdf-options');
+	setStatus('Choose one PDF functionality.', false);
+});
+
+pdfReorderBtn.addEventListener('click', () => {
+	openPdfWorkspace('reorder');
+});
+
+pdfFuseBtn.addEventListener('click', () => {
+	openPdfWorkspace('fuse');
+});
+
+backHomeBtn.addEventListener('click', () => {
+	showScreen('home');
+	setStatus('Choose a category to begin.', false);
+});
+
+backToolsBtn.addEventListener('click', () => {
+	showScreen('pdf-options');
+	setStatus('Choose one PDF functionality.', false);
+});
+
+docMergeBtn.addEventListener('click', showDocComingSoon);
+docReorderBtn.addEventListener('click', showDocComingSoon);
+docConvertBtn.addEventListener('click', showDocComingSoon);
+
 openBtn.addEventListener('click', openAndLoadSinglePdf);
 addBtn.addEventListener('click', openAndAppendPdf);
 saveBtn.addEventListener('click', saveAs);
@@ -312,4 +371,5 @@ dropZone.addEventListener('drop', async (event) => {
 	}
 });
 
+showScreen('home');
 toggleLoadedUi(false);

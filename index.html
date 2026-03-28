@@ -8,32 +8,90 @@
 	</head>
 	<body>
 		<main class="app">
-			<header class="hero">
-				<h1>PDF Meister</h1>
-				<p>Drop PDF files, remove pages, add pages from another PDF, and export a new file.</p>
-			</header>
+			<section id="screen-home" class="screen screen-home">
+				<header class="hero">
+					<h1>PDF Meister</h1>
+					<p>Choose a category to start.</p>
+				</header>
 
-			<section id="drop-zone" class="drop-zone">
-				<h2>Drop PDFs Here</h2>
-				<p>Drop one file to start. Drop multiple files to merge them in order.</p>
-				<button id="btn-open" type="button">Choose PDF</button>
+				<div class="category-grid">
+					<article class="category-card">
+						<h2>PDF</h2>
+						<p>Reorder pages, fuse files, and export a new document.</p>
+						<button id="btn-category-pdf" type="button">Open PDF Tools</button>
+					</article>
+
+					<article class="category-card">
+						<h2>.DOC</h2>
+						<p>Word document utilities are in progress.</p>
+						<div class="doc-buttons">
+							<button id="btn-doc-merge" type="button" class="ghost">Merge .DOC</button>
+							<button id="btn-doc-reorder" type="button" class="ghost">Reorder .DOC Pages</button>
+							<button id="btn-doc-convert" type="button" class="ghost">Convert .DOC</button>
+						</div>
+					</article>
+				</div>
 			</section>
 
-			<section class="toolbar">
-				<button id="btn-add" type="button" disabled>Add Pages From PDF</button>
-				<button id="btn-save" type="button" disabled>Export New PDF</button>
-				<button id="btn-clear" type="button" disabled>Clear</button>
+			<section id="screen-pdf-options" class="screen screen-options hidden">
+				<header class="hero">
+					<h1>PDF Tools</h1>
+					<p>Select what you want to do.</p>
+				</header>
+
+				<div class="options-grid">
+					<button id="btn-pdf-reorder" type="button" class="tool-card">
+						<span class="tool-title">PDF Reorder</span>
+						<span class="tool-copy">Move pages up or down in one document.</span>
+					</button>
+					<button id="btn-pdf-fuse" type="button" class="tool-card">
+						<span class="tool-title">PDF Fuse</span>
+						<span class="tool-copy">Drop multiple PDF files to merge them quickly.</span>
+					</button>
+					<button id="btn-pdf-split" type="button" class="tool-card" disabled>
+						<span class="tool-title">PDF Split</span>
+						<span class="tool-copy">Coming soon.</span>
+					</button>
+				</div>
+
+				<div class="nav-row">
+					<button id="btn-back-home" type="button" class="ghost">Back to Home</button>
+				</div>
 			</section>
 
-			<section class="content">
-				<aside class="panel pages-panel">
-					<h3>Pages</h3>
-					<div id="empty-state" class="empty-state">No document loaded yet.</div>
-					<ul id="page-list" class="page-list"></ul>
-				</aside>
+			<section id="screen-pdf-workspace" class="screen screen-workspace hidden">
+				<header class="hero">
+					<div class="hero-row">
+						<div>
+							<h1>PDF Workspace</h1>
+							<p>Drop PDF files, remove pages, add pages from another PDF, and export a new file.</p>
+						</div>
+						<button id="btn-back-tools" type="button" class="ghost">Back to PDF Tools</button>
+					</div>
+				</header>
+
+				<section id="drop-zone" class="drop-zone">
+					<h2>Drop PDFs Here</h2>
+					<p>Drop one file to start. Drop multiple files to merge them in order.</p>
+					<button id="btn-open" type="button">Choose PDF</button>
+				</section>
+
+				<section class="toolbar">
+					<button id="btn-add" type="button" disabled>Add Pages From PDF</button>
+					<button id="btn-save" type="button" disabled>Export New PDF</button>
+					<button id="btn-clear" type="button" disabled>Clear</button>
+				</section>
+
+				<section class="content">
+					<aside class="panel pages-panel">
+						<h3>Pages</h3>
+						<div id="empty-state" class="empty-state">No document loaded yet.</div>
+						<ul id="page-list" class="page-list"></ul>
+					</aside>
+				</section>
 			</section>
 
-			<footer id="status" class="status">Ready.</footer>
+			<footer id="status" class="status">Choose a category to begin.</footer>
 		</main>
 
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
