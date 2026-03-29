@@ -2,6 +2,31 @@
 
 Desktop Electron app to organize PDF pages without editing text content.
 
+## Project Structure
+
+```text
+.
+|- src/
+|  |- main/
+|  |  |- main.js
+|  |  |- preload.js
+|  \- renderer/
+|     |- index.html
+|     |- styles.css
+|     |- js/
+|     |  |- main.js
+|     |  |- dom.js
+|     |  |- state.js
+|     |  |- ui.js
+|     |  |- pdf-module.js
+|     |  |- image-convert-module.js
+|     |  \- image-resize-module.js
+|     \- templates/
+|        \- image-resize-workspace.js
+|- package.json
+\- README.md
+```
+
 ## Current MVP Features
 
 - Drag and drop one or more PDF files.
@@ -9,6 +34,11 @@ Desktop Electron app to organize PDF pages without editing text content.
 - Add pages from another PDF into the current document.
 - Reorder pages with Up/Down controls.
 - Export as a new PDF file (does not overwrite by default).
+- Convert images in batch (HEIC, HEIF, JPG, JPEG, PNG, WebP, AVIF, TIFF, BMP, GIF).
+- Export converted images to JPEG, PNG, WebP, AVIF, or TIFF.
+- Resize images in batch (scale with fit options: cover, contain, fill).
+- Crop images in batch (extract custom regions with X, Y, Width, Height).
+- Export resized/cropped images to JPEG, PNG, WebP, AVIF, or TIFF.
 
 ## Run
 

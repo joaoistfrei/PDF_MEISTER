@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>PDF Meister</title>
+		<link rel="stylesheet" href="styles.css" />
+	</head>
+	<body>
+		<main class="app">
+			<section id="screen-home" class="screen screen-home">
+				<header class="hero">
+					<h1>PDF Meister</h1>
+					<p>Choose a category to start.</p>
+				</header>
+
+				<div class="category-grid">
+					<article class="category-card">
+						<h2>PDF</h2>
+						<p>Reorder pages, fuse files, and export a new document.</p>
+						<button id="btn-category-pdf" type="button">Open PDF Tools</button>
+					</article>
+
+					<article class="category-card">
+						<h2>Image</h2>
+						<p>Convert HEIC, JPG, JPEG, PNG and other formats to a target image format.</p>
+						<button id="btn-category-image" type="button">Open Image Tools</button>
+					</article>
+				</div>
+			</section>
+
+			<section id="screen-pdf-options" class="screen screen-options hidden">
+				<header class="hero">
+					<h1>PDF Tools</h1>
+					<p>Select what you want to do.</p>
+				</header>
+
+				<div class="options-grid">
+					<button id="btn-pdf-reorder" type="button" class="tool-card">
+						<span class="tool-title">PDF Fuse & Reorder</span>
+						<span class="tool-copy">Move pages up or down in one document. Remove unwanted pages</span>
+					</button>
+				</div>
+
+				<div class="nav-row">
+					<button id="btn-back-home" type="button" class="ghost">Back to Home</button>
+				</div>
+			</section>
+
+			<section id="screen-pdf-workspace" class="screen screen-workspace hidden">
+				<header class="hero">
+					<div class="hero-row">
+						<div>
+							<h1>PDF Workspace</h1>
+							<p>Drop PDF files, remove pages, add pages from another PDF, and export a new file.</p>
+						</div>
+						<button id="btn-back-tools" type="button" class="ghost">Back to PDF Tools</button>
+					</div>
+				</header>
+
+				<section id="drop-zone" class="drop-zone">
+					<h2>Drop PDFs Here</h2>
+					<p>Drop one file to start. Drop multiple files to merge them in order.</p>
+					<button id="btn-open" type="button">Choose PDF</button>
+				</section>
+
+				<section class="toolbar">
+					<button id="btn-add" type="button" disabled>Add Pages From PDF</button>
+					<button id="btn-save" type="button" disabled>Export New PDF</button>
+					<button id="btn-clear" type="button" disabled>Clear</button>
+				</section>
+
+				<section class="content">
+					<aside class="panel pages-panel">
+						<h3>Pages</h3>
+						<div id="empty-state" class="empty-state">No document loaded yet.</div>
+						<ul id="page-list" class="page-list"></ul>
+					</aside>
+				</section>
+			</section>
+
+			<section id="screen-image-options" class="screen screen-options hidden">
+				<header class="hero">
+					<h1>Image Tools</h1>
+					<p>Select what you want to do.</p>
+				</header>
+
+				<div class="options-grid">
+					<button id="btn-image-convert" type="button" class="tool-card">
+						<span class="tool-title">Image Convert</span>
+						<span class="tool-copy">Convert one or many images to JPEG, PNG, WebP, AVIF or TIFF.</span>
+					</button>
+					<button id="btn-image-resize" type="button" class="tool-card">
+						<span class="tool-title">Image Resize</span>
+						<span class="tool-copy">Crop or resize one or many images with custom dimensions.</span>
+					</button>
+				</div>
+
+				<div class="nav-row">
+					<button id="btn-image-back-home" type="button" class="ghost">Back to Home</button>
+				</div>
+			</section>
+
+			<section id="screen-image-workspace" class="screen screen-workspace hidden">
+				<header class="hero">
+					<div class="hero-row">
+						<div>
+							<h1>Image Converter</h1>
+							<p>Select images, choose output format, pick folder, and convert in batch.</p>
+						</div>
+						<button id="btn-image-back-tools" type="button" class="ghost">Back to Image Tools</button>
+					</div>
+				</header>
+
+				<section class="panel image-panel">
+					<div class="image-actions">
+						<button id="btn-image-select" type="button">Select Images</button>
+						<button id="btn-image-folder" type="button">Choose Output Folder</button>
+						<button id="btn-image-convert-run" type="button" disabled>Convert Images</button>
+					</div>
+
+					<div class="image-form-row">
+						<label for="image-format">Output format</label>
+						<select id="image-format">
+							<option value="jpeg">JPEG</option>
+							<option value="png">PNG</option>
+							<option value="webp">WebP</option>
+							<option value="avif">AVIF</option>
+							<option value="tiff">TIFF</option>
+						</select>
+					</div>
+
+					<div class="image-form-row">
+						<label for="image-quality">Quality: <span id="image-quality-value">90</span></label>
+						<input id="image-quality" type="range" min="1" max="100" step="1" value="90" />
+					</div>
+
+					<p id="image-output-path" class="image-output-path">No output folder selected.</p>
+					<h3>Selected Files</h3>
+					<div id="image-empty-state" class="empty-state">No images selected yet.</div>
+					<ul id="image-file-list" class="image-file-list"></ul>
+				</section>
+			</section>
+
+			<div id="image-resize-workspace-root"></div>
+
+			<footer id="status" class="status">Choose a category to begin.</footer>
+		</main>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+		<script type="module" src="js/main.js"></script>
+	</body>
+</html>

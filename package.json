@@ -1,7 +1,7 @@
 {
   "name": "pdf_meister",
   "version": "1.0.0",
-  "main": "main.js",
+  "main": "src/main/main.js",
   "scripts": {
     "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,7 +11,9 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "pdf-lib": "^1.17.1"
+    "heic-convert": "^2.1.0",
+    "pdf-lib": "^1.17.1",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "electron": "^41.1.0"

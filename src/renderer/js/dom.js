@@ -1,0 +1,68 @@
+export function getDom() {
+	const dom = {
+		homeScreen: document.getElementById('screen-home'),
+		pdfOptionsScreen: document.getElementById('screen-pdf-options'),
+		pdfWorkspaceScreen: document.getElementById('screen-pdf-workspace'),
+		imageOptionsScreen: document.getElementById('screen-image-options'),
+		imageWorkspaceScreen: document.getElementById('screen-image-workspace'),
+		imageResizeWorkspaceScreen: document.getElementById('screen-image-resize-workspace'),
+		categoryPdfBtn: document.getElementById('btn-category-pdf'),
+		categoryImageBtn: document.getElementById('btn-category-image'),
+		pdfReorderBtn: document.getElementById('btn-pdf-reorder'),
+		backHomeBtn: document.getElementById('btn-back-home'),
+		backToolsBtn: document.getElementById('btn-back-tools'),
+		imageBackHomeBtn: document.getElementById('btn-image-back-home'),
+		imageBackToolsBtn: document.getElementById('btn-image-back-tools'),
+		imageConvertBtn: document.getElementById('btn-image-convert'),
+		imageResizeBtn: document.getElementById('btn-image-resize'),
+		dropZone: document.getElementById('drop-zone'),
+		openBtn: document.getElementById('btn-open'),
+		addBtn: document.getElementById('btn-add'),
+		saveBtn: document.getElementById('btn-save'),
+		clearBtn: document.getElementById('btn-clear'),
+		pageList: document.getElementById('page-list'),
+		status: document.getElementById('status'),
+		emptyState: document.getElementById('empty-state'),
+		imageSelectBtn: document.getElementById('btn-image-select'),
+		imageFolderBtn: document.getElementById('btn-image-folder'),
+		imageConvertRunBtn: document.getElementById('btn-image-convert-run'),
+		imageFormatSelect: document.getElementById('image-format'),
+		imageQualityRange: document.getElementById('image-quality'),
+		imageQualityValue: document.getElementById('image-quality-value'),
+		imageOutputPath: document.getElementById('image-output-path'),
+		imageFileList: document.getElementById('image-file-list'),
+		imageEmptyState: document.getElementById('image-empty-state'),
+		resizeSelectBtn: document.getElementById('btn-resize-select'),
+		resizeFolderBtn: document.getElementById('btn-resize-folder'),
+		resizeProcessBtn: document.getElementById('btn-resize-process'),
+		resizeModeSelect: document.getElementById('resize-mode'),
+		resizeWidthInput: document.getElementById('resize-width'),
+		resizeHeightInput: document.getElementById('resize-height'),
+		resizeFitSelect: document.getElementById('resize-fit'),
+		cropXInput: document.getElementById('crop-x'),
+		cropYInput: document.getElementById('crop-y'),
+		cropWidthInput: document.getElementById('crop-width'),
+		cropHeightInput: document.getElementById('crop-height'),
+		resizeFormatSelect: document.getElementById('resize-format'),
+		resizeQualityRange: document.getElementById('resize-quality'),
+		resizeQualityValue: document.getElementById('resize-quality-value'),
+		resizeOutputPath: document.getElementById('resize-output-path'),
+		resizeFileList: document.getElementById('resize-file-list'),
+		resizeEmptyState: document.getElementById('resize-empty-state'),
+		resizeFields: document.getElementById('resize-fields'),
+		cropFields: document.getElementById('crop-fields'),
+		resizeBackToolsBtn: document.getElementById('btn-resize-back-tools'),
+		resizePreviewCanvas: document.getElementById('resize-preview-canvas'),
+		cropOverlay: document.getElementById('crop-overlay'),
+		cropArea: document.querySelector('.crop-area'),
+		previewInfo: document.getElementById('preview-info'),
+	};
+
+	const pdfjsLib = window.pdfjsLib || null;
+	if (pdfjsLib) {
+		pdfjsLib.GlobalWorkerOptions.workerSrc =
+			'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+	}
+
+	return { dom, pdfjsLib };
+}
