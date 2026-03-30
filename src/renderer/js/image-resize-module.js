@@ -32,18 +32,13 @@ export function createImageResizeModule(dom, ui) {
 		if (currentPreviewImage) {
 			info.push(`<div><span>Original</span><strong>${currentPreviewImage.width}x${currentPreviewImage.height}</strong></div>`);
 		}
-		if (imageResizeState.mode === 'resize') {
-			info.push(`<div><span>Target</span><strong>${imageResizeState.width}x${imageResizeState.height}</strong></div>`);
-			info.push(`<div><span>Fit</span><strong>${imageResizeState.fit}</strong></div>`);
-		} else {
-			info.push(`<div><span>Crop Area</span><strong>${imageResizeState.cropWidth}x${imageResizeState.cropHeight}</strong></div>`);
-			info.push(`<div><span>Position</span><strong>X:${imageResizeState.cropX}, Y:${imageResizeState.cropY}</strong></div>`);
-		}
+		info.push(`<div><span>Crop Area</span><strong>${imageResizeState.cropWidth}x${imageResizeState.cropHeight}</strong></div>`);
+		info.push(`<div><span>Position</span><strong>X:${imageResizeState.cropX}, Y:${imageResizeState.cropY}</strong></div>`);
 		dom.previewInfo.innerHTML = info.join('');
 	}
 
 	function updateCropOverlay() {
-		if (imageResizeState.mode !== 'crop' || !dom.cropArea || !dom.resizePreviewCanvas) {
+		if (!dom.cropArea || !dom.resizePreviewCanvas) {
 			updatePreviewInfo();
 			return;
 		}
@@ -264,53 +259,28 @@ export function createImageResizeModule(dom, ui) {
 		}
 	}
 
-	function toggleResizeMode() {
-		imageResizeState.mode = dom.resizeModeSelect.value;
-		const isResize = imageResizeState.mode === 'resize';
-		dom.resizeFields.classList.toggle('hidden', !isResize);
-		dom.cropFields.classList.toggle('hidden', isResize);
-		dom.cropOverlay.classList.toggle('hidden', isResize);
-		updateCropOverlay();
-	}
-
 	async function runImageResize() {
 		try {
-			const payload =
-				imageResizeState.mode === 'resize'
-					? {
-							inputPaths: imageResizeState.inputPaths,
-							outputDirectory: imageResizeState.outputDirectory,
-							width: Number(dom.resizeWidthInput.value),
-							height: Number(dom.resizeHeightInput.value),
-							fit: dom.resizeFitSelect.value,
-							outputFormat: dom.resizeFormatSelect.value,
-							quality: Number(dom.resizeQualityRange.value),
-						}
-					: {
-							inputPaths: imageResizeState.inputPaths,
-							outputDirectory: imageResizeState.outputDirectory,
-							x: Number(dom.cropXInput.value),
-							y: Number(dom.cropYInput.value),
-							width: Number(dom.cropWidthInput.value),
-							height: Number(dom.cropHeightInput.value),
-							outputFormat: dom.resizeFormatSelect.value,
-							quality: Number(dom.resizeQualityRange.value),
-						};
+			const payload = {
+				inputPaths: imageResizeState.inputPaths,
+				outputDirectory: imageResizeState.outputDirectory,
+				x: Number(dom.cropXInput.value),
+				y: Number(dom.cropYInput.value),
+				width: Number(dom.cropWidthInput.value),
+				height: Number(dom.cropHeightInput.value),
+				outputFormat: dom.resizeFormatSelect.value,
+				quality: Number(dom.resizeQualityRange.value),
+			};
 
-			const result =
-				imageResizeState.mode === 'resize'
-					? await window.pdfApi.resizeImages(payload)
-					: await window.pdfApi.cropImages(payload);
+			const result = await window.pdfApi.cropImages(payload);
 
 			if (result.failed.length === 0) {
-				const action = imageResizeState.mode === 'resize' ? 'Resized' : 'Cropped';
-				ui.setStatus(`${action} ${result.processed.length} image(s) to ${result.outputFormat.toUpperCase()}.`, false);
+				ui.setStatus(`Cropped ${result.processed.length} image(s) to ${result.outputFormat.toUpperCase()}.`, false);
 				return;
 			}
 
-			const action = imageResizeState.mode === 'resize' ? 'Resized' : 'Cropped';
 			ui.setStatus(
-				`${action} ${result.processed.length} image(s). ${result.failed.length} failed. Check input files and try again.`,
+				`Cropped ${result.processed.length} image(s). ${result.failed.length} failed. Check input files and try again.`,
 				true
 			);
 		} catch (error) {
@@ -320,8 +290,8 @@ export function createImageResizeModule(dom, ui) {
 
 	function openWorkspace() {
 		ui.showScreen('image-resize-workspace');
-		ui.setStatus('Resize/Crop mode selected. Select images and set parameters.', false);
-		toggleResizeMode();
+		ui.setStatus('Crop mode selected. Select images and adjust the crop box.', false);
+		dom.cropOverlay.classList.remove('hidden');
 		if (currentPreviewImage) {
 			drawCanvasPreview();
 		}
@@ -331,7 +301,6 @@ export function createImageResizeModule(dom, ui) {
 		dom.resizeSelectBtn.addEventListener('click', selectImagesForResize);
 		dom.resizeFolderBtn.addEventListener('click', selectOutputFolderForResize);
 		dom.resizeProcessBtn.addEventListener('click', runImageResize);
-		dom.resizeModeSelect.addEventListener('change', toggleResizeMode);
 		dom.resizeQualityRange.addEventListener('input', () => {
 			dom.resizeQualityValue.textContent = dom.resizeQualityRange.value;
 		});
@@ -357,19 +326,6 @@ export function createImageResizeModule(dom, ui) {
 			updateCropOverlay();
 		});
 
-		dom.resizeWidthInput.addEventListener('input', () => {
-			imageResizeState.width = Math.max(1, Number(dom.resizeWidthInput.value));
-			updatePreviewInfo();
-		});
-		dom.resizeHeightInput.addEventListener('input', () => {
-			imageResizeState.height = Math.max(1, Number(dom.resizeHeightInput.value));
-			updatePreviewInfo();
-		});
-		dom.resizeFitSelect.addEventListener('change', () => {
-			imageResizeState.fit = dom.resizeFitSelect.value;
-			updatePreviewInfo();
-		});
-
 		window.addEventListener('resize', () => {
 			if (currentPreviewImage && !dom.imageResizeWorkspaceScreen.classList.contains('hidden')) {
 				drawCanvasPreview();
@@ -381,7 +337,7 @@ export function createImageResizeModule(dom, ui) {
 
 	function init() {
 		renderResizeFileList();
-		toggleResizeMode();
+		dom.cropOverlay.classList.remove('hidden');
 		bindEvents();
 	}
 

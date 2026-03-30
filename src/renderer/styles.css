@@ -474,20 +474,20 @@ button:disabled {
 }
 
 .crop-handle-nw {
-  top: 0;
-  left: 0;
+  top: 10px;
+  left: 10px;
   cursor: nwse-resize;
 }
 
 .crop-handle-ne {
-  top: 0;
+  top: 10px;
   right: 0;
   cursor: nesw-resize;
 }
 
 .crop-handle-sw {
   bottom: 0;
-  left: 0;
+  left: 10px;
   cursor: nesw-resize;
 }
 

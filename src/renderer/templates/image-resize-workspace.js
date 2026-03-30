@@ -3,8 +3,8 @@ export const imageResizeWorkspaceTemplate = `
 	<header class="hero">
 		<div class="hero-row">
 			<div>
-				<h1>Image Resize &amp; Crop</h1>
-				<p>Select images, choose mode, set dimensions, and process in batch.</p>
+				<h1>Image Crop</h1>
+				<p>Select images, adjust the crop box, and process in batch.</p>
 			</div>
 			<button id="btn-resize-back-tools" type="button" class="ghost">Back to Image Tools</button>
 		</div>
@@ -39,36 +39,7 @@ export const imageResizeWorkspaceTemplate = `
 				<button id="btn-resize-process" type="button" disabled>Process Images</button>
 			</div>
 
-			<div class="image-form-row">
-				<label for="resize-mode">Mode</label>
-				<select id="resize-mode">
-					<option value="resize">Resize (scale to size)</option>
-					<option value="crop">Crop (extract area)</option>
-				</select>
-			</div>
-
-			<div id="resize-fields">
-				<div class="image-form-row">
-					<label for="resize-width">Width (px)</label>
-					<input id="resize-width" type="number" min="1" value="800" />
-				</div>
-
-				<div class="image-form-row">
-					<label for="resize-height">Height (px)</label>
-					<input id="resize-height" type="number" min="1" value="600" />
-				</div>
-
-				<div class="image-form-row">
-					<label for="resize-fit">Resize Fit</label>
-					<select id="resize-fit">
-						<option value="cover">Cover (fill, may crop)</option>
-						<option value="contain">Contain (fit inside)</option>
-						<option value="fill">Fill (stretch)</option>
-					</select>
-				</div>
-			</div>
-
-			<div id="crop-fields" class="hidden">
+			<div id="crop-fields">
 				<div class="image-form-row">
 					<label for="crop-x">X Position (px)</label>
 					<input id="crop-x" type="number" min="0" value="0" />
